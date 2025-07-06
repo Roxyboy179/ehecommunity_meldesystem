@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 EHE Community Sicherheit & Meldesystem</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #e0e6ed;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Effects */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.02);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Guidelines Modal */
+        .guidelines-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .guidelines-content {
+            background: #1e1e2e;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 2px solid #4a5568;
+        }
+
+        .guidelines-content h2 {
+            color: #ffd700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .guidelines-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .guidelines-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-accept {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .btn-accept:hover {
+            background: #34ce57;
+        }
+
+        .btn-decline {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .btn-decline:hover {
+            background: #e55865;
+        }
+
+        /* Access Denied Screen */
+        .access-denied {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .access-denied-content {
+            text-align: center;
+            color: #ff6b6b;
+        }
+
+        .access-denied-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .access-denied-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #ffd700;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #b0b7c3;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid #4a5568;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: #4fc3f7;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .card p {
+            color: #b0b7c3;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #e0e6ed;
+            font-weight: 500;
+        }
+
+        .required {
+            color: #ff6b6b;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            background: #2a2a3a;
+            color: #e0e6ed;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4fc3f7;
+        }
+
+        .form-group input[type="file"] {
+            padding: 0.5rem;
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .image-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 8px;
+            border: 2px solid #4a5568;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-submit:disabled {
+            background: #4a5568;
+            cursor: not-allowed;
+        }
+
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        .notification.success {
+            background: #28a745;
+            border-left: 4px solid #20c997;
+        }
+
+        .notification.error {
+            background: #dc3545;
+            border-left: 4px solid #fd7e14;
+        }
+
+        .notification.warning {
+            background: #ffc107;
+            color: #212529;
+            border-left: 4px solid #ff8c00;
+        }
+
+        .notification.info {
+            background: #17a2b8;
+            border-left: 4px solid #20c997;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .warning-section {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid #dc3545;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .warning-section h3 {
+            color: #ff6b6b;
+            margin-bottom: 1rem;
+        }
+
+        .warning-section p {
+            color: #ffb3b3;
+            line-height: 1.6;
+        }
+
+        .security-status {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid #28a745;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .security-status h3 {
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+
+        .security-status p {
+            color: #90ee90;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+
+    <!-- Guidelines Modal -->
+    <div id="guidelinesModal" class="guidelines-modal">
+        <div class="guidelines-content">
+            <h2>🔐 EHE Community Richtlinien</h2>
+            <p><strong>Willkommen bei der EHE Community!</strong></p>
+            <p>Um unsere Plattform nutzen zu können, müssen Sie unseren Richtlinien zustimmen:</p>
+            <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+                <li>Sie verpflichten sich, nur wahrheitsgemäße Meldungen zu erstellen</li>
+                <li>Missbrauch des Meldesystems führt zur Kontosperrung</li>
+                <li>Respektvoller Umgang mit anderen Community-Mitgliedern</li>
+                <li>Keine Hassrede oder Diskriminierung</li>
+                <li>Beweise sind bei Meldungen erforderlich</li>
+            </ul>
+            <p><strong>Wichtig:</strong> Diese Zustimmung ist bei jedem Seitenaufruf erforderlich. Ohne Zustimmung können Sie die Plattform nicht nutzen.</p>
+            <div class="guidelines-buttons">
+                <button class="btn-accept" onclick="acceptGuidelines()">Zustimmen</button>
+                <button class="btn-decline" onclick="declineGuidelines()">Ablehnen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Denied Screen -->
+    <div id="accessDenied" class="access-denied" style="display: none;">
+        <div class="access-denied-content">
+            <h1>🚫 Zugang verweigert</h1>
+            <p>Sie haben unseren Richtlinien nicht zugestimmt.</p>
+            <p>Der Zugang zur Plattform wurde gesperrt.</p>
+            <button class="btn-accept" onclick="location.reload()">Seite neu laden</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" style="display: none;">
+        <div class="container">
+            <div class="header">
+                <h1>🔐 EHE Community Sicherheit & Meldesystem</h1>
+                <p>Willkommen im offiziellen <strong>Sicherheits- und Meldungsportal</strong> der <strong>EHE Community</strong>. Hier findest du aktuelle Informationen zur Systemsicherheit und kannst Probleme oder Regelverstöße direkt an das Moderationsteam melden.</p>
+            </div>
+
+            <!-- Security Status -->
+            <div class="security-status">
+                <h3>📢 Aktuelle Sicherheitsstatus</h3>
+                <p>✅ Alle Systeme funktionieren normal. Keine bekannten Sicherheitsprobleme.</p>
+                <p>Letzte Überprüfung: <span id="lastCheck"></span></p>
+            </div>
+
+            <div class="cards-container">
+                <!-- Technical Report Card -->
+                <div class="card">
+                    <h2>🔧 Technische Probleme melden</h2>
+                    <p>Sollte dir ein technisches Problem auffallen, das sicherheitsrelevant ist, kannst du es hier melden. Unser System leitet deinen Bericht automatisch an unser Discord-Sicherheits-Team weiter.</p>
+                    
+                    <form id="technicalForm">
+                        <div class="form-group">
+                            <label for="techReporterName">Dein Name: <span class="required">*</span></label>
+                            <input type="text" id="techReporterName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="techReporterEmail">Deine E-Mail: <span class="required">*</span></label>
+                            <input type="email" id="techReporterEmail" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="techProblemType">Art des Problems: <span class="required">*</span></label>
+                            <select id="techProblemType" required>
+                                <option value="">Bitte wählen...</option>
+                                <option value="sicherheitslücke">Sicherheitslücke</option>
+                                <option value="server-fehler">Server-Fehler</option>
+                                <option value="login-probleme">Login-Probleme</option>
+                                <option value="datenbank-fehler">Datenbank-Fehler</option>
+                                <option value="andere">Andere technische Probleme</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="techDescription">Detaillierte Beschreibung: <span class="required">*</span></label>
+                            <textarea id="techDescription" rows="4" required placeholder="Beschreibe das Problem so detailliert wie möglich..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="techSteps">Schritte zur Reproduktion:</label>
+                            <textarea id="techSteps" rows="3" placeholder="Wie kann das Problem reproduziert werden?"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="techScreenshots">Screenshots/Beweise:</label>
+                            <input type="file" id="techScreenshots" accept="image/*" multiple>
+                            <div id="techImagePreview" class="image-preview"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="techBrowser">Browser/System:</label>
+                            <input type="text" id="techBrowser" placeholder="z.B. Chrome 120, Windows 11">
+                        </div>
+                        
+                        <button type="submit" class="btn-submit">🚀 Technisches Problem melden</button>
+                    </form>
+                </div>
+
+                <!-- User Report Card -->
+                <div class="card">
+                    <h2>👤 Nutzer melden (Regelverstoß)</h2>
+                    <p>Wenn dir ein Nutzer auffällt, der gegen unsere Community-Regeln verstößt, kannst du dies hier melden. Bitte sende die Meldung <strong>nur mit gültigen Beweisen</strong>.</p>
+                    
+                    <form id="userForm">
+                        <div class="form-group">
+                            <label for="reporterName">Dein Name: <span class="required">*</span></label>
+                            <input type="text" id="reporterName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reporterEmail">Deine E-Mail: <span class="required">*</span></label>
+                            <input type="email" id="reporterEmail" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reportedUser">Nutzername der gemeldeten Person: <span class="required">*</span></label>
+                            <input type="text" id="reportedUser" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="violationType">Gegen welche Regel wurde verstoßen: <span class="required">*</span></label>
+                            <select id="violationType" required>
+                                <option value="">Bitte wählen...</option>
+                                <option value="hassrede">Hassrede/Diskriminierung</option>
+                                <option value="spam">Spam/Werbung</option>
+                                <option value="beleidigung">Beleidigung/Mobbing</option>
+                                <option value="betrug">Betrug/Scam</option>
+                                <option value="inappropriate">Unangemessene Inhalte</option>
+                                <option value="fake-account">Fake-Account</option>
+                                <option value="andere">Andere Regelverstöße</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reportReason">Grund der Meldung: <span class="required">*</span></label>
+                            <textarea id="reportReason" rows="4" required placeholder="Beschreibe den Regelverstoß detailliert..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reportEvidence">Bildbeweise: <span class="required">*</span></label>
+                            <input type="file" id="reportEvidence" accept="image/*" multiple required>
+                            <div id="userImagePreview" class="image-preview"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="additionalInfo">Weitere Hinweise:</label>
+                            <textarea id="additionalInfo" rows="3" placeholder="Zusätzliche Informationen..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-submit">⚠️ Nutzer melden</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Warning Section -->
+            <div class="warning-section">
+                <h3>⚠️ Wichtiger Hinweis</h3>
+                <p><strong>Achtung:</strong> Missbräuchliche Meldungen – z. B. zum Spaß oder ohne Beweise – werden <strong>nicht toleriert</strong>. Wer absichtlich falsche Angaben macht, riskiert eine <strong>Kontosperrung oder einen dauerhaften Ausschluss</strong> aus der Community.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Guidelines system
+        function acceptGuidelines() {
+            document.getElementById('guidelinesModal').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            showNotification('Richtlinien akzeptiert. Willkommen bei der EHE Community!', 'success');
+            updateLastCheck();
+        }
+
+        function declineGuidelines() {
+            document.getElementById('guidelinesModal').style.display = 'none';
+            document.getElementById('accessDenied').style.display = 'flex';
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Update last check time
+        function updateLastCheck() {
+            const now = new Date();
+            const timeString = now.toLocaleString('de-DE');
+            document.getElementById('lastCheck').textContent = timeString;
+        }
+
+        // Image preview functionality
+        function setupImagePreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+
+            input.addEventListener('change', function(e) {
+                preview.innerHTML = '';
+                const files = Array.from(e.target.files);
+
+                files.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            preview.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+        }
+
+        // Form validation
+        function validateForm(formId) {
+            const form = document.getElementById(formId);
+            const requiredFields = form.querySelectorAll('[required]');
+            
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    field.focus();
+                    showNotification(`Bitte füllen Sie das Feld "${field.previousElementSibling.textContent}" aus.`, 'error');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Technical form submission
+        document.getElementById('technicalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateForm('technicalForm')) return;
+
+            const formData = new FormData();
+            const reporterName = document.getElementById('techReporterName').value;
+            const reporterEmail = document.getElementById('techReporterEmail').value;
+            const problemType = document.getElementById('techProblemType').value;
+            const description = document.getElementById('techDescription').value;
+            const steps = document.getElementById('techSteps').value;
+            const browser = document.getElementById('techBrowser').value;
+            const screenshots = document.getElementById('techScreenshots').files;
+
+            // Simulate form submission
+            showNotification('Technisches Problem wird gemeldet...', 'info');
+            
+            setTimeout(() => {
+                showNotification('Technisches Problem erfolgreich gemeldet! Unser Team wurde benachrichtigt.', 'success');
+                document.getElementById('technicalForm').reset();
+                document.getElementById('techImagePreview').innerHTML = '';
+            }, 2000);
+        });
+
+        // User report form submission
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateForm('userForm')) return;
+
+            const evidenceFiles = document.getElementById('reportEvidence').files;
+            if (evidenceFiles.length === 0) {
+                showNotification('Bitte laden Sie mindestens einen Bildbeweis hoch.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            const reporterName = document.getElementById('reporterName').value;
+            const reporterEmail = document.getElementById('reporterEmail').value;
+            const reportedUser = document.getElementById('reportedUser').value;
+            const violationType = document.getElementById('violationType').value;
+            const reason = document.getElementById('reportReason').value;
+            const additionalInfo = document.getElementById('additionalInfo').value;
+
+            // Simulate form submission
+            showNotification('Nutzermeldung wird verarbeitet...', 'info');
+            
+            setTimeout(() => {
+                showNotification('Nutzermeldung erfolgreich eingereicht! Das Moderationsteam wurde benachrichtigt.', 'success');
+                document.getElementById('userForm').reset();
+                document.getElementById('userImagePreview').innerHTML = '';
+            }, 2000);
+        });
+
+        // Initialize image preview
+        setupImagePreview('techScreenshots', 'techImagePreview');
+        setupImagePreview('reportEvidence', 'userImagePreview');
+
+        // Show guidelines modal on page load
+        window.addEventListener('load', function() {
+            document.getElementById('guidelinesModal').style.display = 'flex';
+        });
+    </script>
+</body>
+</html>
