@@ -709,6 +709,87 @@
         window.addEventListener('load', function() {
             document.getElementById('guidelinesModal').style.display = 'flex';
         });
+
+// Technical form submission
+        document.getElementById('technicalForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateForm('technicalForm')) return;
+
+            const reporterName = document.getElementById('techReporterName').value;
+            const reporterEmail = document.getElementById('techReporterEmail').value;
+            const problemType = document.getElementById('techProblemType').value;
+            const description = document.getElementById('techDescription').value;
+            const steps = document.getElementById('techSteps').value;
+            const browser = document.getElementById('techBrowser').value;
+            const screenshots = document.getElementById('techScreenshots').files;
+
+            showNotification('Technisches Problem wird gemeldet...', 'info');
+
+            // Prepare Discord webhook payload
+            const discordPayload = {
+                embeds: [{
+                    title: "🔧 Neues technisches Problem gemeldet",
+                    color: 0xff6b6b,
+                    timestamp: new Date().toISOString(),
+                    fields: [
+                        {
+                            name: "👤 Melder",
+                            value: `**Name:** ${reporterName}\n**E-Mail:** ${reporterEmail}`,
+                            inline: true
+                        },
+                        {
+                            name: "⚠️ Problem-Art",
+                            value: problemType,
+                            inline: true
+                        },
+                        {
+                            name: "🌐 Browser/System",
+                            value: browser || "Nicht angegeben",
+                            inline: true
+                        },
+                        {
+                            name: "📝 Beschreibung",
+                            value: description,
+                            inline: false
+                        }
+                    ],
+                    footer: {
+                        text: "EHE Community Sicherheitssystem"
+                    }
+                }]
+            };
+
+            // Add steps field if provided
+            if (steps.trim()) {
+                discordPayload.embeds[0].fields.push({
+                    name: "🔄 Schritte zur Reproduktion",
+                    value: steps,
+                    inline: false
+                });
+            }
+
+            try {
+                const response = await fetch('https://discord.com/api/webhooks/1391023916473909298/NBsy0KHOg-ailD4oa9F05v-hcW8AoRXfA41Wj-khNNrc-zP5mc2o8cmkZb74Uri5k4Dm', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(discordPayload)
+                });
+
+                if (response.ok) {
+                    showNotification('Technisches Problem erfolgreich gemeldet! Unser Team wurde benachrichtigt.', 'success');
+                    document.getElementById('technicalForm').reset();
+                    document.getElementById('techImagePreview').innerHTML = '';
+                } else {
+                    throw new Error('Discord webhook failed');
+                }
+            } catch (error) {
+                showNotification('Fehler beim Senden der Meldung. Bitte versuchen Sie es später erneut.', 'error');
+                console.error('Error sending to Discord:', error);
+            }
+        });
     </script>
 </body>
 </html>
