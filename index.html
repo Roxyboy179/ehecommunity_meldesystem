@@ -645,240 +645,100 @@
             }
             return true;
         }
+//🛠️ Technisches Problem
+document.getElementById('technicalForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-        // Technical form submission
-        document.getElementById('technicalForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!validateForm('technicalForm')) return;
+  const reporterName = document.getElementById('techReporterName').value;
+  const reporterEmail = document.getElementById('techReporterEmail').value;
+  const problemType = document.getElementById('techProblemType').value;
+  const description = document.getElementById('techDescription').value;
+  const steps = document.getElementById('techSteps').value || "Keine Angabe";
+  const browser = document.getElementById('techBrowser').value || "Keine Angabe";
 
-            const formData = new FormData();
-            const reporterName = document.getElementById('techReporterName').value;
-            const reporterEmail = document.getElementById('techReporterEmail').value;
-            const problemType = document.getElementById('techProblemType').value;
-            const description = document.getElementById('techDescription').value;
-            const steps = document.getElementById('techSteps').value;
-            const browser = document.getElementById('techBrowser').value;
-            const screenshots = document.getElementById('techScreenshots').files;
+  const embed = {
+    title: "🛠️ Technisches Problem gemeldet",
+    color: 0x3498db,
+    timestamp: new Date().toISOString(),
+    fields: [
+      { name: "👤 Melder", value: `**Name:** ${reporterName}\\n**E-Mail:** ${reporterEmail}` },
+      { name: "⚙️ Problemtyp", value: problemType },
+      { name: "📝 Beschreibung", value: description },
+      { name: "🔁 Reproduktion", value: steps },
+      { name: "🖥️ System/Browser", value: browser }
+    ],
+    footer: {
+      text: "EHE Community Technischer Report"
+    }
+  };
 
-            // Simulate form submission
-            showNotification('Technisches Problem wird gemeldet...', 'info');
-            
-            setTimeout(() => {
-                showNotification('Technisches Problem erfolgreich gemeldet! Unser Team wurde benachrichtigt.', 'success');
-                document.getElementById('technicalForm').reset();
-                document.getElementById('techImagePreview').innerHTML = '';
-            }, 2000);
-        });
+  try {
+    const response = await fetch("https://discord.com/api/webhooks/1391026654310039593/sQcqqtH_z1d3ZtQ-UihZnAo-oBSJVswWf-HFlvGyZWmzTTVglCLbEMZBW_N42YsfTkT5", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ embeds: [embed] })
+    });
 
-        // User report form submission
-        document.getElementById('userForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!validateForm('userForm')) return;
+    if (response.ok) {
+      showNotification("Technischer Bericht erfolgreich gesendet!", "success");
+      document.getElementById("technicalForm").reset();
+      document.getElementById("techImagePreview").innerHTML = '';
+    } else {
+      showNotification("Fehler beim Senden!", "error");
+    }
+  } catch (error) {
+    console.error("Fehler:", error);
+    showNotification("Netzwerkfehler oder CORS-Block!", "error");
+  }
+});
 
-            const evidenceFiles = document.getElementById('reportEvidence').files;
-            if (evidenceFiles.length === 0) {
-                showNotification('Bitte laden Sie mindestens einen Bildbeweis hoch.', 'error');
-                return;
-            }
+// ⚠️ Nutzermeldung
+document.getElementById('userForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-            const formData = new FormData();
-            const reporterName = document.getElementById('reporterName').value;
-            const reporterEmail = document.getElementById('reporterEmail').value;
-            const reportedUser = document.getElementById('reportedUser').value;
-            const violationType = document.getElementById('violationType').value;
-            const reason = document.getElementById('reportReason').value;
-            const additionalInfo = document.getElementById('additionalInfo').value;
+  const reporterName = document.getElementById('reporterName').value;
+  const reporterEmail = document.getElementById('reporterEmail').value;
+  const reportedUser = document.getElementById('reportedUser').value;
+  const violationType = document.getElementById('violationType').value;
+  const reason = document.getElementById('reportReason').value;
+  const additionalInfo = document.getElementById('additionalInfo').value;
 
-            // Simulate form submission
-            showNotification('Nutzermeldung wird verarbeitet...', 'info');
-            
-            setTimeout(() => {
-                showNotification('Nutzermeldung erfolgreich eingereicht! Das Moderationsteam wurde benachrichtigt.', 'success');
-                document.getElementById('userForm').reset();
-                document.getElementById('userImagePreview').innerHTML = '';
-            }, 2000);
-        });
+  const embed = {
+    title: "⚠️ Neue Nutzermeldung",
+    color: 0xe74c3c,
+    timestamp: new Date().toISOString(),
+    fields: [
+      { name: "👤 Melder", value: `**Name:** ${reporterName}\\n**E-Mail:** ${reporterEmail}` },
+      { name: "🎯 Gemeldeter Nutzer", value: reportedUser },
+      { name: "📜 Regelverstoß", value: violationType },
+      { name: "📝 Grund", value: reason },
+      { name: "ℹ️ Zusätzliche Infos", value: additionalInfo || "Keine Angaben" }
+    ],
+    footer: {
+      text: "EHE Community Nutzermeldung"
+    }
+  };
 
-        // Initialize image preview
-        setupImagePreview('techScreenshots', 'techImagePreview');
-        setupImagePreview('reportEvidence', 'userImagePreview');
+  try {
+    const response = await fetch("https://discord.com/api/webhooks/1391026654310039593/sQcqqtH_z1d3ZtQ-UihZnAo-oBSJVswWf-HFlvGyZWmzTTVglCLbEMZBW_N42YsfTkT5", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ embeds: [embed] })
+    });
 
-        // Show guidelines modal on page load
-        window.addEventListener('load', function() {
-            document.getElementById('guidelinesModal').style.display = 'flex';
-        });
+    if (response.ok) {
+      showNotification("Nutzermeldung erfolgreich gesendet!", "success");
+      document.getElementById("userForm").reset();
+    } else {
+      showNotification("Fehler beim Senden!", "error");
+    }
+  } catch (error) {
+    console.error("Fehler:", error);
+    showNotification("Netzwerkfehler oder CORS-Block!", "error");
+  }
+});
 
-// Technical form submission
-        document.getElementById('technicalForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            if (!validateForm('technicalForm')) return;
 
-            const reporterName = document.getElementById('techReporterName').value;
-            const reporterEmail = document.getElementById('techReporterEmail').value;
-            const problemType = document.getElementById('techProblemType').value;
-            const description = document.getElementById('techDescription').value;
-            const steps = document.getElementById('techSteps').value;
-            const browser = document.getElementById('techBrowser').value;
-            const screenshots = document.getElementById('techScreenshots').files;
-
-            showNotification('Technisches Problem wird gemeldet...', 'info');
-
-            // Prepare Discord webhook payload
-            const discordPayload = {
-                embeds: [{
-                    title: "🔧 Neues technisches Problem gemeldet",
-                    color: 0xff6b6b,
-                    timestamp: new Date().toISOString(),
-                    fields: [
-                        {
-                            name: "👤 Melder",
-                            value: `**Name:** ${reporterName}\n**E-Mail:** ${reporterEmail}`,
-                            inline: true
-                        },
-                        {
-                            name: "⚠️ Problem-Art",
-                            value: problemType,
-                            inline: true
-                        },
-                        {
-                            name: "🌐 Browser/System",
-                            value: browser || "Nicht angegeben",
-                            inline: true
-                        },
-                        {
-                            name: "📝 Beschreibung",
-                            value: description,
-                            inline: false
-                        }
-                    ],
-                    footer: {
-                        text: "EHE Community Sicherheitssystem"
-                    }
-                }]
-            };
-
-            // Add steps field if provided
-            if (steps.trim()) {
-                discordPayload.embeds[0].fields.push({
-                    name: "🔄 Schritte zur Reproduktion",
-                    value: steps,
-                    inline: false
-                });
-            }
-
-            try {
-                const response = await fetch('https://discord.com/api/webhooks/1391023916473909298/NBsy0KHOg-ailD4oa9F05v-hcW8AoRXfA41Wj-khNNrc-zP5mc2o8cmkZb74Uri5k4Dm', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(discordPayload)
-                });
-
-                if (response.ok) {
-                    showNotification('Technisches Problem erfolgreich gemeldet! Unser Team wurde benachrichtigt.', 'success');
-                    document.getElementById('technicalForm').reset();
-                    document.getElementById('techImagePreview').innerHTML = '';
-                } else {
-                    throw new Error('Discord webhook failed');
-                }
-            } catch (error) {
-                showNotification('Fehler beim Senden der Meldung. Bitte versuchen Sie es später erneut.', 'error');
-                console.error('Error sending to Discord:', error);
-            }
-        });
-
-// User report form submission
-        document.getElementById('userForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            if (!validateForm('userForm')) return;
-
-            const evidenceFiles = document.getElementById('reportEvidence').files;
-            if (evidenceFiles.length === 0) {
-                showNotification('Bitte laden Sie mindestens einen Bildbeweis hoch.', 'error');
-                return;
-            }
-
-            const reporterName = document.getElementById('reporterName').value;
-            const reporterEmail = document.getElementById('reporterEmail').value;
-            const reportedUser = document.getElementById('reportedUser').value;
-            const violationType = document.getElementById('violationType').value;
-            const reason = document.getElementById('reportReason').value;
-            const additionalInfo = document.getElementById('additionalInfo').value;
-
-            
-            // Create Discord embed for user report
-            const embed = {
-                title: "⚠️ Neue Nutzermeldung eingegangen",
-                color: 0xdc3545,
-                timestamp: new Date().toISOString(),
-                fields: [
-                    {
-                        name: "👤 Melder",
-                        value: `**Name:** ${reporterName}\n**E-Mail:** ${reporterEmail}`,
-                        inline: false
-                    },
-                    {
-                        name: "🎯 Gemeldeter Nutzer",
-                        value: `**Username:** ${reportedUser}\n**Regelverstoß:** ${violationType}`,
-                        inline: false
-                    },
-                    {
-                        name: "📝 Grund der Meldung",
-                        value: reason.length > 1000 ? reason.substring(0, 1000) + '...' : reason,
-                        inline: false
-                    },
-                    {
-                        name: "📸 Beweise",
-                        value: `${evidenceFiles.length} Bildbeweis(e) hochgeladen`,
-                        inline: false
-                    }
-                ],
-                footer: {
-                    text: "EHE Community Meldesystem",
-                    icon_url: "https://cdn.discordapp.com/emojis/1234567890123456789.png"
-                }
-            };
-
-            if (additionalInfo) {
-                embed.fields.push({
-                    name: "ℹ️ Zusätzliche Informationen",
-                    value: additionalInfo.length > 1000 ? additionalInfo.substring(0, 1000) + '...' : additionalInfo,
-                    inline: false
-                });
-            }
-
-            showNotification('Nutzermeldung wird verarbeitet...', 'info');
-            
-              try {
-                const response = await fetch('https://discord.com/api/webhooks/1391026654310039593/sQcqqtH_z1d3ZtQ-UihZnAo-oBSJVswWf-HFlvGyZWmzTTVglCLbEMZBW_N42YsfTkT5', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(discordPayload)
-                });
-            
-            if (success) {
-                showNotification('Nutzermeldung erfolgreich eingereicht! Das Moderationsteam wurde benachrichtigt.', 'success');
-                document.getElementById('userForm').reset();
-                document.getElementById('userImagePreview').innerHTML = '';
-            } else {
-                showNotification('Fehler beim Senden der Meldung. Bitte versuchen Sie es erneut.', 'error');
-            }
-        });
-
-        // Initialize image preview
-        setupImagePreview('reportEvidence', 'userImagePreview');
-
-        // Show guidelines modal on page load
-        window.addEventListener('load', function() {
-            document.getElementById('guidelinesModal').style.display = 'flex';
-        });
     </script>
 </body>
 </html>
