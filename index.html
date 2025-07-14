@@ -791,7 +791,26 @@
             }
         });
 
+// User report form submission
+        document.getElementById('userForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!validateForm('userForm')) return;
 
+            const evidenceFiles = document.getElementById('reportEvidence').files;
+            if (evidenceFiles.length === 0) {
+                showNotification('Bitte laden Sie mindestens einen Bildbeweis hoch.', 'error');
+                return;
+            }
+
+            const reporterName = document.getElementById('reporterName').value;
+            const reporterEmail = document.getElementById('reporterEmail').value;
+            const reportedUser = document.getElementById('reportedUser').value;
+            const violationType = document.getElementById('violationType').value;
+            const reason = document.getElementById('reportReason').value;
+            const additionalInfo = document.getElementById('additionalInfo').value;
+
+            
             // Create Discord embed for user report
             const embed = {
                 title: "⚠️ Neue Nutzermeldung eingegangen",
