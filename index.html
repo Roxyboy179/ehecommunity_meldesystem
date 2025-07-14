@@ -790,6 +790,69 @@
                 console.error('Error sending to Discord:', error);
             }
         });
+
+
+            // Create Discord embed for user report
+            const embed = {
+                title: "⚠️ Neue Nutzermeldung eingegangen",
+                color: 0xdc3545,
+                timestamp: new Date().toISOString(),
+                fields: [
+                    {
+                        name: "👤 Melder",
+                        value: `**Name:** ${reporterName}\n**E-Mail:** ${reporterEmail}`,
+                        inline: false
+                    },
+                    {
+                        name: "🎯 Gemeldeter Nutzer",
+                        value: `**Username:** ${reportedUser}\n**Regelverstoß:** ${violationType}`,
+                        inline: false
+                    },
+                    {
+                        name: "📝 Grund der Meldung",
+                        value: reason.length > 1000 ? reason.substring(0, 1000) + '...' : reason,
+                        inline: false
+                    },
+                    {
+                        name: "📸 Beweise",
+                        value: `${evidenceFiles.length} Bildbeweis(e) hochgeladen`,
+                        inline: false
+                    }
+                ],
+                footer: {
+                    text: "EHE Community Meldesystem",
+                    icon_url: "https://cdn.discordapp.com/emojis/1234567890123456789.png"
+                }
+            };
+
+            if (additionalInfo) {
+                embed.fields.push({
+                    name: "ℹ️ Zusätzliche Informationen",
+                    value: additionalInfo.length > 1000 ? additionalInfo.substring(0, 1000) + '...' : additionalInfo,
+                    inline: false
+                });
+            }
+
+            showNotification('Nutzermeldung wird verarbeitet...', 'info');
+            
+            const success = await sendDiscordWebhook(USER_WEBHOOK, embed);
+            
+            if (success) {
+                showNotification('Nutzermeldung erfolgreich eingereicht! Das Moderationsteam wurde benachrichtigt.', 'success');
+                document.getElementById('userForm').reset();
+                document.getElementById('userImagePreview').innerHTML = '';
+            } else {
+                showNotification('Fehler beim Senden der Meldung. Bitte versuchen Sie es erneut.', 'error');
+            }
+        });
+
+        // Initialize image preview
+        setupImagePreview('reportEvidence', 'userImagePreview');
+
+        // Show guidelines modal on page load
+        window.addEventListener('load', function() {
+            document.getElementById('guidelinesModal').style.display = 'flex';
+        });
     </script>
 </body>
 </html>
