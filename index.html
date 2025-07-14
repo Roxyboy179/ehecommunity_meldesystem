@@ -661,7 +661,8 @@ document.getElementById('technicalForm').addEventListener('submit', async functi
     color: 0x3498db,
     timestamp: new Date().toISOString(),
     fields: [
-      { name: "👤 Melder", value: `**Name:** ${reporterName}\\n**E-Mail:** ${reporterEmail}` },
+      { name: "👤 Melder", value: reporterName },
+      { name: "📩 E-Mial", value: reporterEmail },
       { name: "⚙️ Problemtyp", value: problemType },
       { name: "📝 Beschreibung", value: description },
       { name: "🔁 Reproduktion", value: steps },
@@ -673,7 +674,7 @@ document.getElementById('technicalForm').addEventListener('submit', async functi
   };
 
   try {
-    const response = await fetch("https://discord.com/api/webhooks/1391026654310039593/sQcqqtH_z1d3ZtQ-UihZnAo-oBSJVswWf-HFlvGyZWmzTTVglCLbEMZBW_N42YsfTkT5", {
+    const response = await fetch("https://discord.com/api/webhooks/1391023916473909298/NBsy0KHOg-ailD4oa9F05v-hcW8AoRXfA41Wj-khNNrc-zP5mc2o8cmkZb74Uri5k4Dm", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ embeds: [embed] })
@@ -708,7 +709,8 @@ document.getElementById('userForm').addEventListener('submit', async function(e)
     color: 0xe74c3c,
     timestamp: new Date().toISOString(),
     fields: [
-      { name: "👤 Melder", value: `**Name:** ${reporterName}\\n**E-Mail:** ${reporterEmail}` },
+      { name: "👤 Melder", value: reporterName },
+      { name: "📩 E-Mial", value: reporterEmail },
       { name: "🎯 Gemeldeter Nutzer", value: reportedUser },
       { name: "📜 Regelverstoß", value: violationType },
       { name: "📝 Grund", value: reason },
