@@ -854,7 +854,7 @@
 
             showNotification('Nutzermeldung wird verarbeitet...', 'info');
             
-            const success = await sendDiscordWebhook(USER_WEBHOOK, embed);
+            const success = await sendDiscordWebhook('https://discord.com/api/webhooks/1391026654310039593/sQcqqtH_z1d3ZtQ-UihZnAo-oBSJVswWf-HFlvGyZWmzTTVglCLbEMZBW_N42YsfTkT5', embed);
             
             if (success) {
                 showNotification('Nutzermeldung erfolgreich eingereicht! Das Moderationsteam wurde benachrichtigt.', 'success');
